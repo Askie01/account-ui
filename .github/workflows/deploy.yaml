@@ -13,7 +13,7 @@ on:
         default: 'latest'
 
 env:
-  IMAGE: ghcr.io/${{ github.repository_owner }}/recipe-ui:${{ inputs.image_tag || 'latest' }}
+  IMAGE: ghcr.io/${{ github.repository_owner }}/account-ui:${{ inputs.image_tag || 'latest' }}
 
 jobs:
   deploy:
@@ -31,7 +31,7 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_SSH_PORT || 22 }}
           script: |
-            IMAGE="ghcr.io/$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/recipe-ui:${{ inputs.image_tag || 'latest' }}"
+            IMAGE="ghcr.io/$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/account-ui:${{ inputs.image_tag || 'latest' }}"
             CONTAINER="${{ vars.CONTAINER_NAME }}"
 
             echo "==> Logging in to GHCR"
