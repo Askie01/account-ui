@@ -1,0 +1,24 @@
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-wrapper {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 240px 1fr 300px;
+    gap: 16px;
+    padding: 16px;
+}
+
+.sidebar,
+.right-panel {
+    position: sticky;
+    top: 16px;
+    height: fit-content;
+}
+
+.main {
+    min-height: 80vh;
+}
