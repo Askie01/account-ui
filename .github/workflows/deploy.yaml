@@ -1,0 +1,57 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: [ "Publish" ]
+    types: [ completed ]
+    branches: [ "master" ]
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Docker image tag to deploy (default: latest)'
+        required: false
+        default: 'latest'
+
+env:
+  IMAGE: ghcr.io/${{ github.repository_owner }}/recipe-ui:${{ inputs.image_tag || 'latest' }}
+
+jobs:
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    environment: production
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT || 22 }}
+          script: |
+            IMAGE="ghcr.io/$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/recipe-ui:${{ inputs.image_tag || 'latest' }}"
+            CONTAINER="${{ vars.CONTAINER_NAME }}"
+
+            echo "==> Logging in to GHCR"
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ github.repository_owner }}" --password-stdin
+
+            echo "==> Stopping container: $CONTAINER"
+            docker stop "$CONTAINER" || true
+
+            echo "==> Removing container: $CONTAINER"
+            docker rm "$CONTAINER" || true
+
+            echo "==> Pulling image: $IMAGE"
+            docker pull "$IMAGE"
+
+            echo "==> Starting container: $CONTAINER"
+            docker run -d \
+              --name "$CONTAINER" \
+              --restart unless-stopped \
+              --network askie-solutions-network \
+              "$IMAGE"
+
+            echo "==> Deployment complete"
+            docker ps --filter "name=$CONTAINER"
