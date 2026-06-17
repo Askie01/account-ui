@@ -12,7 +12,7 @@
     padding: 16px;
 }
 
-.sidebar,
+.left-panel,
 .right-panel {
     position: sticky;
     top: 16px;
