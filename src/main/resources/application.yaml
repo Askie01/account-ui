@@ -1,3 +1,7 @@
+server:
+  servlet:
+    context-path: /accounts
+
 spring:
   application:
     name: account-ui
