@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="EN">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">My App</title>
+    <link rel="icon" type="image/jpeg" th:href="@{/images/logo.jpg}">
+
+    <link rel="stylesheet" th:href="@{/css/base.css}">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/components.css}">
+</head>
+
+<body>
+
+<div class="app">
+
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <div class="content-wrapper">
+
+        <aside class="sidebar">
+            <div th:replace="~{fragments/sidebar}"></div>
+        </aside>
+
+        <main class="main card">
+            <div th:replace="~{${view}}"></div>
+        </main>
+
+        <aside class="right-panel">
+            <div th:replace="~{fragments/right-panel}"></div>
+        </aside>
+
+    </div>
+
+    <div th:replace="~{fragments/footer}"></div>
+
+</div>
+
+</body>
+</html>
